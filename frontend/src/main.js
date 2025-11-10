@@ -1,6 +1,6 @@
 // frontend/src/main.js
 // No imports (Bootstrap ya lo cargas desde index.html)
-const API = 'http://localhost:4000/api/productos';
+const API = 'https://inventario-ws0v.onrender.com/api/productos';
 const tabla = document.getElementById('tablaProductos');
 const form = document.getElementById('formProducto');
 const idProductoInput = document.getElementById('idProducto');
@@ -171,7 +171,6 @@ form.addEventListener('submit', async (e) => {
     }
   }
 
-  // si no editando -> crear
   try {
     if (usandoBackend) {
       await fetchJson(API, {
@@ -186,15 +185,14 @@ form.addEventListener('submit', async (e) => {
     }
     throw new Error('no backend');
   } catch (err) {
-    // fallback: push en productos local
-    // evitar IDs duplicados en local: si idProducto existe reemplaza
+    
     const existeIdx = productos.findIndex(p => p.idProducto === payload.idProducto || p.id === payload.idProducto);
     if (existeIdx >= 0) {
       // actualizar si ya existe
       productos[existeIdx] = { ...productos[existeIdx], ...payload };
       showAlert('Producto actualizado (local).', 'info', 1800);
     } else {
-      // si no viene id generamos interno
+      
       const newItem = { ...payload, id: payload.idProducto || `L-${Date.now()}` };
       productos.push(newItem);
       showAlert('Producto agregado (local).', 'success', 1800);
@@ -205,7 +203,6 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
-// ---------- ACCIONES en tabla: Ver, Editar, Eliminar ----------
 tabla.addEventListener('click', async (ev) => {
   const btn = ev.target.closest('button');
   if (!btn) return;
