@@ -1,9 +1,9 @@
 import Producto from "../models/producto.js";
 
-// 🟢 Crear producto
+
 export const crearProducto = async (req, res) => {
   try {
-    // Validar ID duplicado
+    
     if (!req.body.idProducto) return res.status(400).json({ mensaje: "ID es requerido" });
     const existe = await Producto.findOne({ idProducto: req.body.idProducto });
     if (existe) return res.status(400).json({ mensaje: "ID ya existe" });
@@ -22,7 +22,7 @@ export const crearProducto = async (req, res) => {
   }
 };
 
-// 🔵 Obtener todos los productos
+
 export const obtenerProductos = async (req, res) => {
   try {
     const productos = await Producto.find().sort({ createdAt: -1 });
@@ -35,7 +35,7 @@ export const obtenerProductos = async (req, res) => {
   }
 };
 
-// 🟡 Obtener un producto por ID (MongoDB)
+
 export const obtenerProductoPorId = async (req, res) => {
   try {
     const producto = await Producto.findById(req.params.id);
@@ -49,10 +49,10 @@ export const obtenerProductoPorId = async (req, res) => {
   }
 };
 
-// 🟠 Actualizar producto
+
 export const actualizarProducto = async (req, res) => {
   try {
-    // Validar ID duplicado al actualizar
+   
     if (req.body.idProducto) {
       const existe = await Producto.findOne({ idProducto: req.body.idProducto, _id: { $ne: req.params.id } });
       if (existe) return res.status(400).json({ mensaje: "ID ya existe" });
@@ -76,7 +76,7 @@ export const actualizarProducto = async (req, res) => {
   }
 };
 
-// 🔴 Eliminar producto
+
 export const eliminarProducto = async (req, res) => {
   try {
     const eliminado = await Producto.findByIdAndDelete(req.params.id);

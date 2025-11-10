@@ -1,5 +1,4 @@
-// frontend/src/main.js
-// No imports (Bootstrap ya lo cargas desde index.html)
+
 const API = 'https://inventario-ws0v.onrender.com/api/productos';
 const tabla = document.getElementById('tablaProductos');
 const form = document.getElementById('formProducto');
@@ -14,10 +13,10 @@ const buscarId = document.getElementById('buscarId');
 const buscarNombre = document.getElementById('buscarNombre');
 const buscarCategoria = document.getElementById('buscarCategoria');
 
-let productos = [];            // datos en memoria
-let usandoBackend = true;      // intentaremos backend y si falla usamos fallback local
+let productos = [];           
+let usandoBackend = true;     
 
-// ---------- UTIL: alert central ----------
+
 function showAlert(htmlText, tipo = 'success', tiempo = 3000) {
   alertContainer.innerHTML = '';
   const a = document.createElement('div');
@@ -29,24 +28,24 @@ function showAlert(htmlText, tipo = 'success', tiempo = 3000) {
   if (tiempo > 0) setTimeout(() => a.remove(), tiempo);
 }
 
-// ---------- UTIL: safe fetch ----------
+
 async function fetchJson(url, opts = {}) {
   try {
     const res = await fetch(url, opts);
     if (!res.ok) {
-      // si el backend responde con error, lanzar para fallback
+     
       const text = await res.text().catch(() => res.statusText);
       throw new Error(`HTTP ${res.status} — ${text}`);
     }
     return await res.json();
   } catch (err) {
-    // marcar que backend falló
+   
     usandoBackend = false;
     throw err;
   }
 }
 
-// ---------- FALLBACK localStorage ----------
+
 const STORAGE_KEY = 'productos_fallback_v1';
 function loadFallback() {
   try {
@@ -59,10 +58,10 @@ function loadFallback() {
 function saveFallback() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(productos));
-  } catch (e) { /* ignore */ }
+  } catch (e) {  }
 }
 
-// ---------- RENDER TABLA ----------
+
 function formatCell(v) { return typeof v === 'undefined' || v === null || v === '' ? '—' : String(v); }
 
 function renderTabla(list = productos) {
@@ -70,9 +69,9 @@ function renderTabla(list = productos) {
   if (!Array.isArray(list)) list = [];
   list.forEach((p, idx) => {
     const tr = document.createElement('tr');
-    // guardo index en data para poder localizar incluso en fallback; si usas backend buscas por _id
+   
     tr.dataset.idx = idx;
-    tr.dataset.backendId = p._id || ''; // si viene del backend, usar _id para operaciones
+    tr.dataset.backendId = p._id || ''; 
     tr.dataset.descripcion = p.descripcion || '';
     tr.innerHTML = `
       <td>${formatCell(p.idProducto ?? p.id)}</td>
@@ -89,17 +88,17 @@ function renderTabla(list = productos) {
   });
 }
 
-// ---------- CARGAR datos (intento backend, sino fallback) ----------
+
 async function cargar() {
-  // reset flag (intentar backend cada recarga)
+ 
   usandoBackend = true;
   try {
     const productosBackend = await fetchJson(API);
-    // el backend devuelve array de productos
+   
     productos = Array.isArray(productosBackend) ? productosBackend : [];
     renderTabla(productos);
   } catch (err) {
-    // fallback local
+
     loadFallback();
     renderTabla(productos);
     showAlert('Backend no disponible: usando almacenamiento local (offline).', 'warning', 3500);
@@ -107,20 +106,20 @@ async function cargar() {
   }
 }
 
-// ---------- AGREGAR / ACTUALIZAR ----------
-let editandoBackendId = null; // si editando producto backend, guarda _id; si null, es crear nuevo
+
+let editandoBackendId = null;
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  // validación mínima
+ 
   const idVal = idProductoInput.value.trim();
   const nombreVal = nombreInput.value.trim();
   const cantidadVal = cantidadInput.value.trim();
   const categoriaVal = categoriaInput.value.trim();
   const descripcionVal = descripcionInput.value.trim();
 
-  // visual: marcar campos requeridos
+  
   [idProductoInput, nombreInput, cantidadInput, categoriaInput].forEach(el => el.classList.toggle('is-invalid', !el.value));
 
   if (!idVal || !nombreVal || !cantidadVal || !categoriaVal) {
@@ -136,9 +135,9 @@ form.addEventListener('submit', async (e) => {
     descripcion: descripcionVal
   };
 
-  // Si estamos editando (editandoBackendId set) -> PUT
+ 
   if (editandoBackendId) {
-    // intentar atualizar en backend, si fallo usar fallback
+   
     try {
       if (usandoBackend) {
         await fetchJson(`${API}/${editandoBackendId}`, {
@@ -154,7 +153,7 @@ form.addEventListener('submit', async (e) => {
       }
       throw new Error('no backend');
     } catch (err) {
-      // actualizar en fallback usando idProducto o índice
+     
       const idx = productos.findIndex(p => (p._id && p._id === editandoBackendId) || p.idProducto === payload.idProducto || p.id === payload.idProducto);
       if (idx >= 0) {
         productos[idx] = { ...productos[idx], ...payload };
@@ -188,7 +187,7 @@ form.addEventListener('submit', async (e) => {
     
     const existeIdx = productos.findIndex(p => p.idProducto === payload.idProducto || p.id === payload.idProducto);
     if (existeIdx >= 0) {
-      // actualizar si ya existe
+    
       productos[existeIdx] = { ...productos[existeIdx], ...payload };
       showAlert('Producto actualizado (local).', 'info', 1800);
     } else {
@@ -240,16 +239,16 @@ tabla.addEventListener('click', async (ev) => {
   }
 
   if (action === 'editar') {
-    // si hay backendId preferimos obtener producto real del backend
+    
     if (backendId && usandoBackend) {
       try {
         producto = await fetchJson(`${API}/${backendId}`);
       } catch (err) {
-        // fallback: keep producto from array
+       
       }
     }
 
-    // Creamos un modal dinámico para editar
+  
     crearModalEditar(producto, backendId);
     return;
   }
@@ -257,7 +256,7 @@ tabla.addEventListener('click', async (ev) => {
   if (action === 'eliminar') {
     if (!confirm('¿Seguro que deseas eliminar este producto?')) return;
 
-    // intentar backend delete
+   
     if (backendId && usandoBackend) {
       try {
         await fetchJson(`${API}/${backendId}`, { method: 'DELETE' });
@@ -265,13 +264,13 @@ tabla.addEventListener('click', async (ev) => {
         cargar();
         return;
       } catch (err) {
-        // continuar a fallback
+      
         usingFallbackDelete(idx);
         return;
       }
     }
 
-    // fallback local delete
+   
     usingFallbackDelete(idx);
   }
 });
@@ -283,9 +282,9 @@ function usingFallbackDelete(idx) {
   showAlert('Producto eliminado (local).', 'danger', 1600);
 }
 
-// ---------- crear modal editar dinámico ----------
+
 function crearModalEditar(prod = {}, backendId = null) {
-  // si ya existe un modal creado anteriormente, elimínalo
+ 
   const prev = document.getElementById('modalEditarDynamic');
   if (prev) prev.remove();
 
@@ -318,7 +317,6 @@ function crearModalEditar(prod = {}, backendId = null) {
   const bsModal = new bootstrap.Modal(modalHTML);
   bsModal.show();
 
-  // eventos de guardar
   modalHTML.querySelector('#modal_save_btn').addEventListener('click', async () => {
     const payload = {
       idProducto: modalHTML.querySelector('#modal_edit_id').value.trim(),
@@ -328,7 +326,7 @@ function crearModalEditar(prod = {}, backendId = null) {
       descripcion: modalHTML.querySelector('#modal_edit_descripcion').value.trim()
     };
 
-    // validación
+ 
     if (!payload.idProducto || !payload.nombre || !payload.categoria || Number.isNaN(payload.cantidad)) {
       showAlert('Completa los campos requeridos en edición', 'danger', 2500);
       return;
@@ -348,12 +346,12 @@ function crearModalEditar(prod = {}, backendId = null) {
         cargar();
         return;
       } catch (err) {
-        // proceed to local fallback
+       
         console.warn('Fallo actualizar backend, usando local', err);
       }
     }
 
-    // fallback: actualizar en productos local (buscar por idProducto o id)
+   
     const idx = productos.findIndex(p => p.idProducto === payload.idProducto || p.id === payload.idProducto || (p._id && p._id === backendId));
     if (idx >= 0) {
       productos[idx] = { ...productos[idx], ...payload };
@@ -361,7 +359,7 @@ function crearModalEditar(prod = {}, backendId = null) {
       renderTabla(productos);
       showAlert('Producto actualizado (local).', 'info', 1800);
     } else {
-      // si no se encontró, agregar
+   
       productos.push({ ...payload, id: payload.idProducto });
       saveFallback();
       renderTabla(productos);
@@ -372,11 +370,11 @@ function crearModalEditar(prod = {}, backendId = null) {
     modalHTML.remove();
   });
 
-  // limpiar modal del DOM cuando se oculta
+ 
   modalHTML.addEventListener('hidden.bs.modal', () => modalHTML.remove());
 }
 
-// ---------- FILTRADO automático ----------
+
 function filtrar() {
   const idF = (buscarId?.value || '').toLowerCase();
   const nombreF = (buscarNombre?.value || '').toLowerCase();
@@ -392,10 +390,10 @@ function filtrar() {
 [buscarId, buscarNombre].forEach(el => el && el.addEventListener('input', filtrar));
 if (buscarCategoria) buscarCategoria.addEventListener('change', filtrar);
 
-// ---------- helpers ----------
+
 function escapeHtml(s='') {
   return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
 }
 
-// ---------- inicialización ----------
+
 cargar();
