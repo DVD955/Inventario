@@ -101,20 +101,20 @@
 
   <div id="alertContainer"></div>
 
-  <!-- FORMULARIO -->
+
   <div class="card-glass">
     <form id="formProducto" class="row g-3 needs-validation" novalidate>
       <div class="col-md-2">
         <input id="idProducto" class="form-control" placeholder="ID (manual)" required>
-        <div class="invalid-feedback">ID requerido</div>
+        <div class="invalid-feedback">ID </div>
       </div>
       <div class="col-md-3">
         <input id="nombre" class="form-control" placeholder="Nombre" required>
-        <div class="invalid-feedback">Nombre requerido</div>
+        <div class="invalid-feedback">Nombre </div>
       </div>
       <div class="col-md-2">
         <input id="cantidad" type="number" class="form-control" placeholder="Cantidad" required min="0">
-        <div class="invalid-feedback">Cantidad válida requerida</div>
+        <div class="invalid-feedback">Cantidad  </div>
       </div>
       <div class="col-md-3">
         <select id="categoria" class="form-select" required>
@@ -135,13 +135,13 @@
     </form>
   </div>
 
-  <!-- FILTRO -->
+
   <div class="filtro-card row g-3 align-items-center">
     <div class="col-md-4">
-      <input id="buscarId" type="text" class="form-control" placeholder="Buscar por ID...">
+      <input id="buscarId" type="text" class="form-control" placeholder="Buscar por ID">
     </div>
     <div class="col-md-4">
-      <input id="buscarNombre" type="text" class="form-control" placeholder="Buscar por nombre...">
+      <input id="buscarNombre" type="text" class="form-control" placeholder="Buscar por nombre+">
     </div>
     <div class="col-md-3">
       <select id="buscarCategoria" class="form-select">
@@ -154,7 +154,7 @@
     </div>
   </div>
 
-  <!-- TABLA -->
+
   <div class="table-wrapper">
     <table class="table align-middle mb-0">
       <thead>
