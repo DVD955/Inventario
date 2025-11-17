@@ -1,4 +1,4 @@
-export function crearModalVer(prod) {
+export function crearModalVer(producto) {
   const prev = document.getElementById('modalVerDynamic');
   if (prev) prev.remove();
 
@@ -10,24 +10,22 @@ export function crearModalVer(prod) {
   modalHTML.innerHTML = `
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content p-3">
-        <div class="modal-header">
-          <h5 class="modal-title">Ver Producto</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <p><b>ID:</b> ${prod.idProducto}</p>
-          <p><b>Nombre:</b> ${prod.nombre}</p>
-          <p><b>Cantidad:</b> ${prod.cantidad}</p>
-          <p><b>Categoría:</b> ${prod.categoria}</p>
-          <p><b>Descripción:</b> ${prod.descripcion || 'Sin descripción'}</p>
-        </div>
-        <div class="modal-footer">
+        <h5 class="text-center mb-3">Detalles del Producto</h5>
+        <p><strong>ID:</strong> ${producto.idProducto}</p>
+        <p><strong>Nombre:</strong> ${producto.nombre}</p>
+        <p><strong>Cantidad:</strong> ${producto.cantidad}</p>
+        <p><strong>Categoría:</strong> ${producto.categoria}</p>
+        <p><strong>Descripción:</strong> ${producto.descripcion || 'Sin descripción'}</p>
+        <div class="text-center mt-3">
           <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
         </div>
       </div>
     </div>
   `;
+
   document.body.appendChild(modalHTML);
-  new bootstrap.Modal(modalHTML).show();
+  const modal = new bootstrap.Modal(modalHTML);
+  modal.show();
+
   modalHTML.addEventListener('hidden.bs.modal', () => modalHTML.remove());
 }

@@ -1,27 +1,35 @@
-import { crearProducto } from '../api.js';
 import { showAlert } from '../utils.js';
+import { fetchJson, API } from '../api.js';
 
-// Inicialización del formulario
-export function initForm(formEl, alertContainer, callbackCargar) {
-  formEl.addEventListener('submit', async (e) => {
+export function initForm(form, recargar) {
+  const idProductoInput = form.querySelector('#idProducto');
+  const nombreInput = form.querySelector('#nombre');
+  const cantidadInput = form.querySelector('#cantidad');
+  const categoriaInput = form.querySelector('#categoria');
+  const descripcionInput = form.querySelector('#descripcion');
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // Obtener datos del formulario
     const payload = {
-      idProducto: formEl.querySelector('#idProducto').value.trim(),
-      nombre: formEl.querySelector('#nombre').value.trim(),
-      cantidad: Number(formEl.querySelector('#cantidad').value.trim()),
-      categoria: formEl.querySelector('#categoria').value.trim(),
-      descripcion: formEl.querySelector('#descripcion').value.trim()
+      idProducto: idProductoInput.value.trim(),
+      nombre: nombreInput.value.trim(),
+      cantidad: Number(cantidadInput.value.trim()),
+      categoria: categoriaInput.value.trim(),
+      descripcion: descripcionInput.value.trim()
     };
 
     try {
-      await crearProducto(payload);
-      showAlert(alertContainer, 'Producto agregado correctamente.', 'success');
-      formEl.reset();
-      if (callbackCargar) callbackCargar(); // recarga la tabla
+      await fetchJson(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      showAlert('Producto agregado correctamente.', 'success');
+      form.reset();
+      recargar();
     } catch (err) {
-      showAlert(alertContainer, 'Error al agregar producto.', 'danger');
+      showAlert('Error al agregar producto.', 'danger');
       console.error(err);
     }
   });

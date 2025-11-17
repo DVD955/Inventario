@@ -1,12 +1,10 @@
-import { actualizarProducto } from '../api.js';
-import { showAlert } from '../utils.js';
+import { fetchJson, API } from './api.js';
+import { showAlert } from './utils.js';
 
-export function crearModalEditar(prod, backendId, alertContainer) {
-  // Eliminar modal previo si existe
+export function crearModalEditar(prod, backendId, cargar) {
   const prev = document.getElementById('modalEditarDynamic');
   if (prev) prev.remove();
 
-  // Crear modal nuevo
   const modalHTML = document.createElement('div');
   modalHTML.id = 'modalEditarDynamic';
   modalHTML.className = 'modal fade';
@@ -40,7 +38,6 @@ export function crearModalEditar(prod, backendId, alertContainer) {
   const modal = new bootstrap.Modal(modalHTML);
   modal.show();
 
-  // Guardar cambios
   modalHTML.querySelector('#guardarModal').addEventListener('click', async () => {
     const payload = {
       idProducto: document.getElementById('e_id').value.trim(),
@@ -51,13 +48,17 @@ export function crearModalEditar(prod, backendId, alertContainer) {
     };
 
     try {
-      await actualizarProducto(backendId, payload);
-      showAlert(alertContainer, "Producto actualizado correctamente.", "info");
+      await fetchJson(`${API}/${backendId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      showAlert("Producto actualizado correctamente.", "info");
       modal.hide();
-      location.reload(); // o llamar a cargar() si lo manejas desde main.js
+      cargar();
     } catch (err) {
-      showAlert(alertContainer, "Error al actualizar.", "danger");
-      console.error(err);
+      showAlert("Error al actualizar.", "danger");
     }
   });
 

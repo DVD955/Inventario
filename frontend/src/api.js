@@ -1,4 +1,4 @@
-const API = 'https://inventario-ws0v.onrender.com/api/productos';
+export const API = 'https://inventario-ws0v.onrender.com/api/productos';
 
 export async function fetchJson(url, opts = {}) {
   try {
@@ -12,8 +12,3 @@ export async function fetchJson(url, opts = {}) {
     throw err;
   }
 }
-
-export async function getProductos() { return fetchJson(API); }
-export async function crearProducto(payload) { return fetchJson(API, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) }); }
-export async function actualizarProducto(id, payload) { return fetchJson(`${API}/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) }); }
-export async function eliminarProducto(id) { return fetchJson(`${API}/${id}`, { method: 'DELETE' }); }
