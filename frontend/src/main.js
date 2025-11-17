@@ -1,4 +1,4 @@
-
+const API = 'https://inventario-ws0v.onrender.com/api/productos';
 import { getProductos } from './api.js';
 import { renderTabla, initTabla } from './components/table.js';
 import { showAlert } from './utils.js';
