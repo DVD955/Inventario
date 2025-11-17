@@ -155,9 +155,7 @@ tabla.addEventListener('click', async (ev) => {
   }
 });
 
-/* -------------------------
-      MODAL EDITAR
--------------------------- */
+
 function crearModalEditar(prod, backendId) {
   const prev = document.getElementById('modalEditarDynamic');
   if (prev) prev.remove();
@@ -222,9 +220,7 @@ function crearModalEditar(prod, backendId) {
   modalHTML.addEventListener('hidden.bs.modal', () => modalHTML.remove());
 }
 
-/* -------------------------
-      FILTROS
--------------------------- */
+
 function filtrar() {
   const idF = buscarId.value.toLowerCase();
   const nomF = buscarNombre.value.toLowerCase();
