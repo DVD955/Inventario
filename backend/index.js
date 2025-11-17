@@ -14,7 +14,7 @@ app.use("/api/productos", productoRoutes);
 
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Conectado a MongoDB Atlas"))
+  .then(() => console.log(" Conectado a MongoDB Atlas"))
   .catch(err => {
     console.error(" Error al conectar:", err.message);
     process.exit(1);
