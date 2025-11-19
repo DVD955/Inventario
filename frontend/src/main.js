@@ -1,25 +1,30 @@
 import { fetchJson, API } from './api.js';
 import { showAlert } from './utils.js';
 import { renderTabla } from './table.js';
+import { setupFormProducto } from './form.js'; // <--- Importamos tu nuevo componente
 
+// Referencias principales del DOM
 const tabla = document.getElementById('tablaProductos');
 const form = document.getElementById('formProducto');
-const idProductoInput = document.getElementById('idProducto');
-const nombreInput = document.getElementById('nombre');
-const cantidadInput = document.getElementById('cantidad');
-const categoriaInput = document.getElementById('categoria');
-const descripcionInput = document.getElementById('descripcion');
 
+// Referencias para los filtros
 const buscarId = document.getElementById('buscarId');
 const buscarNombre = document.getElementById('buscarNombre');
 const buscarCategoria = document.getElementById('buscarCategoria');
 
+// Estado local de la lista de productos
 let productos = [];
 
+/**
+ * Función principal para cargar los datos desde el Backend
+ */
 async function cargar() {
   try {
     const datos = await fetchJson(API);
+    // Aseguramos que sea un array antes de guardarlo
     productos = Array.isArray(datos) ? datos : [];
+    
+    // Renderizamos la tabla
     renderTabla(productos, tabla, cargar);
   } catch (err) {
     showAlert('Error cargando datos.', 'danger');
@@ -27,30 +32,16 @@ async function cargar() {
   }
 }
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const payload = {
-    idProducto: idProductoInput.value.trim(),
-    nombre: nombreInput.value.trim(),
-    cantidad: Number(cantidadInput.value.trim()),
-    categoria: categoriaInput.value.trim(),
-    descripcion: descripcionInput.value.trim()
-  };
+/**
+ * INICIALIZACIÓN DE COMPONENTES
+ * Aquí conectamos el formulario con la lógica de recarga.
+ * Cuando el formulario termine de guardar, ejecutará 'cargar()'.
+ */
+setupFormProducto(form, cargar);
 
-  try {
-    await fetchJson(API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    showAlert('Producto agregado correctamente.', 'success');
-    form.reset();
-    cargar();
-  } catch (err) {
-    showAlert('Error al agregar producto.', 'danger');
-  }
-});
-
+/**
+ * Lógica de filtrado en el cliente (Frontend)
+ */
 function filtrar() {
   const idF = buscarId.value.toLowerCase();
   const nomF = buscarNombre.value.toLowerCase();
@@ -65,8 +56,10 @@ function filtrar() {
   renderTabla(filtrados, tabla, cargar);
 }
 
+// Eventos para los filtros (búsqueda en tiempo real)
 buscarId.addEventListener('input', filtrar);
 buscarNombre.addEventListener('input', filtrar);
 buscarCategoria.addEventListener('change', filtrar);
 
+// Carga inicial al abrir la página
 cargar();
