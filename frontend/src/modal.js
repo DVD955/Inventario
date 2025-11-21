@@ -19,7 +19,18 @@ export function crearModalEditar(prod, backendId, cargar) {
         </div>
 
         <div class="modal-body">
-          <div class="mb-2"><label>ID</label><input id="e_id" class="form-control" value="${prod.idProducto}"></div>
+          <div class="mb-2">
+            <label>ID (No editable)</label>
+            <input 
+              id="e_id" 
+              class="form-control" 
+              value="${prod.idProducto}" 
+              disabled 
+              readonly
+              style="background-color: #e9ecef; cursor: not-allowed;"
+            >
+          </div>
+
           <div class="mb-2"><label>Nombre</label><input id="e_nombre" class="form-control" value="${prod.nombre}"></div>
           <div class="mb-2"><label>Cantidad</label><input id="e_cantidad" type="number" class="form-control" value="${prod.cantidad}"></div>
           <div class="mb-2"><label>Categoría</label><input id="e_categoria" class="form-control" value="${prod.categoria}"></div>
@@ -27,7 +38,7 @@ export function crearModalEditar(prod, backendId, cargar) {
         </div>
 
         <div class="modal-footer">
-          <button id="guardarModal" class="btn btn-success">Guardar</button>
+          <button id="guardarModal" class="btn btn-success">Actualizar</button>
           <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         </div>
       </div>
@@ -40,6 +51,7 @@ export function crearModalEditar(prod, backendId, cargar) {
 
   modalHTML.querySelector('#guardarModal').addEventListener('click', async () => {
     const payload = {
+      // Aunque enviemos el ID, el backend lo ignorará gracias a la protección que pusimos antes
       idProducto: document.getElementById('e_id').value.trim(),
       nombre: document.getElementById('e_nombre').value.trim(),
       cantidad: Number(document.getElementById('e_cantidad').value),
@@ -56,7 +68,8 @@ export function crearModalEditar(prod, backendId, cargar) {
 
       showAlert("Producto actualizado correctamente.", "info");
       modal.hide();
-      cargar();
+      // Esperamos un poco a que se cierre el modal para recargar
+      setTimeout(() => cargar(), 300); 
     } catch (err) {
       showAlert("Error al actualizar.", "danger");
     }
